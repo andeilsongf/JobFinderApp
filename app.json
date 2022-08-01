@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "job-finder",
+    "slug": "job-finder",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "plugins": [
+      "@react-native-firebase/app",
+      "expo-build-properties"
+    ],
+    "android": {
+      "googleServicesFile": "./google-services.json",
+      "package": "com.jobslocale"
+    },
+    "ios": {
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "bundleIdentifier": "com.jobslocale"
+    }
+  }
+}

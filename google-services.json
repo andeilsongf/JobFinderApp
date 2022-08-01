@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "482818125523",
+    "project_id": "jobs-fb5ad",
+    "storage_bucket": "jobs-fb5ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482818125523:android:7c34d44beda0d25bbd2e26",
+        "android_client_info": {
+          "package_name": "com.jobslocale"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "482818125523-8b9kp3ad728nrnm3q6ocdt303lbi5mhp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_qvafJcQRmd6NXFSueR8tLXd2zBmdiB8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "482818125523-8b9kp3ad728nrnm3q6ocdt303lbi5mhp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "482818125523-chaq06f74bqg9c9gjll4p24h1je7uao2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.jobslocale"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
