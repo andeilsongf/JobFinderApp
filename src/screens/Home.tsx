@@ -10,10 +10,12 @@ import {
   VStack,
   FlatList,
   Center,
+  Box,
 } from "native-base";
 
 import * as Location from "expo-location";
 import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
 
 import {
   Feather,
@@ -30,13 +32,21 @@ import { Alert } from "react-native";
 
 export function Home() {
   const { colors } = useTheme();
-
   const navigation = useNavigation();
+
+  const [jobs, setJobs] = useState<JobProps[]>([]);
+  const [category, setCategory] = useState<"remote" | "full-time">("remote");
 
   const [locationServiceEnabled, setLocationServiceEnabled] = useState(false);
   const [displayCurrentAddress, setDisplayCurrentAddress] = useState(
     "Wait, we are fetching you location..."
   );
+
+  function handleJobDetails(jobId: string) {
+    navigation.navigate("details", {
+      jobId
+    })
+  }
 
   function handleLogout() {
     auth()
@@ -54,36 +64,31 @@ export function Home() {
     navigation.navigate("register");
   }
 
-  const [jobs, setJobs] = useState<JobProps[]>([
-    {
-      id: "1",
-      title: "Twitch",
-      company: "Pinion",
-      type: "Full Time",
-    },
-    {
-      id: "2",
-      title: "YouTube",
-      company: "Pinion",
-      type: "Remote",
-    },
-    {
-      id: "3",
-      title: "Apple",
-      company: "Pinion",
-      type: "Full Time",
-    },
-    {
-      id: "4",
-      title: "Google",
-      company: "Pinion",
-      type: "Remote",
-    },
-  ]);
-
   useEffect(() => {
     GetCurrentLocation();
   }, []);
+
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection("jobs")
+      .where("type", "==", category)
+      .onSnapshot((snapshot) => {
+        const data = snapshot.docs.map((doc) => {
+          const { company, overview, type, requirements } = doc.data();
+          return {
+            id: doc.id,
+            company,
+            overview,
+            type,
+            requirements,
+          };
+        });
+
+        setJobs(data);
+      });
+
+    return subscriber;
+  }, [category]);
 
   const GetCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -196,10 +201,6 @@ export function Home() {
         />
       </HStack>
 
-      <VStack>
-        <Text></Text>
-      </VStack>
-
       <VStack p={5} mt="34">
         <HStack w="full" space="2">
           <Input
@@ -247,11 +248,37 @@ export function Home() {
           >
             Job Category
           </Heading>
+          <Box
+            alignItems="center"
+            justifyContent="center"
+            borderRadius={1}
+            borderWidth={1}
+            px={3}
+            py={1}
+            rounded="full"
+            borderColor="green.300"
+          >
+            <Text>{jobs.length}</Text>
+          </Box>
         </HStack>
 
-        <HStack mt="22" w="full" space={3}>
-          <Category flexGrow={1} title="Remote" quantity="230" />
-          <Category flexGrow={1} title="Presential" quantity="1030" />
+        <HStack
+          mt="22"
+          w="full"
+          space={3}
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Category
+            flexGrow={1}
+            title="Remote"
+            onPress={() => setCategory("remote")}
+          />
+          <Category
+            flexGrow={1}
+            title="Full-Time"
+            onPress={() => setCategory("full-time")}
+          />
         </HStack>
 
         <HStack
@@ -281,7 +308,7 @@ export function Home() {
         <FlatList
           data={jobs}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <Job data={item} />}
+          renderItem={({ item }) => <Job data={item} onPress={() => handleJobDetails(item.id)} />}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingBottom: 500,

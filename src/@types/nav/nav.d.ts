@@ -6,7 +6,7 @@ export declare global {
       register: undefined;
       signin: undefined;
       details: {
-        orderId: string,
+        jobId: string,
       }
     }
   }

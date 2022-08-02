@@ -2,15 +2,16 @@ import { Button, Heading, Text, IButtonProps } from "native-base";
 
 type Props = IButtonProps & {
   title: string;
-  quantity: string;
 };
 
-export function Category({ title, quantity, ...rest }: Props) {
+export function Category({ title, ...rest }: Props) {
   return (
     <Button
-      
       bg="white"
       rounded="10"
+      alignItems="center"
+      justifyContent="center"
+      h={20}
       style={{
         shadowColor: "rgba(64, 64, 64, .16)",
         shadowOpacity: 0.16,
@@ -21,7 +22,7 @@ export function Category({ title, quantity, ...rest }: Props) {
         },
       }}
       _pressed={{
-        bg: "white",
+        bg: "green.100",
       }}
       {...rest}
     >
@@ -36,16 +37,6 @@ export function Category({ title, quantity, ...rest }: Props) {
       >
         {title}
       </Heading>
-      <Text
-        justifyContent="center"
-        alignItems="center"
-        textAlign="center"
-        fontSize="2xs"
-        fontWeight={400}
-        color="gray.400"
-      >
-        {quantity} jobs
-      </Text>
     </Button>
   );
 }

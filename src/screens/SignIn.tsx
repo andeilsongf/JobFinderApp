@@ -106,6 +106,10 @@ export function SignIn() {
               as={<FontAwesome name="envelope-o" size={24} />}
             />
           }
+          _focus={{
+            bg: "gray.300",
+          }}
+          autoCapitalize={"none"}
           onChangeText={setEmail}
         />
 
@@ -124,6 +128,10 @@ export function SignIn() {
               as={<FontAwesome name="lock" size={24} color="black" />}
             />
           }
+          _focus={{
+            bg: "gray.300",
+          }}
+          autoCapitalize={"none"}
           secureTextEntry
           onChangeText={setPassword}
         />

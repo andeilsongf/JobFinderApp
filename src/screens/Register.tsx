@@ -1,5 +1,3 @@
-import { Feather, FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 import {
   VStack,
   Text,
@@ -16,8 +14,43 @@ import { useState } from "react";
 
 import { Header } from "../components/Header";
 
+import firestore from "@react-native-firebase/firestore";
+import { Alert } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 export function Register() {
-  let [category, setCategory] = useState("");
+  const [company, setCompany] = useState("");
+  const [overview, setOverview] = useState("");
+  const [type, setType] = useState("");
+  const [requirements, setRequirements] = useState("");
+
+  const navigation = useNavigation();
+
+  function handleJobRegister() {
+    if (!company || !overview || !type || !requirements) {
+      return Alert.alert("Register", "Please fill and the fields");
+    }
+
+    firestore()
+      .collection("jobs")
+      .add({
+        company,
+        overview,
+        type,
+        requirements,
+        created_at: firestore.FieldValue.serverTimestamp(),
+      })
+
+      .then(() => {
+        Alert.alert("Register", "Job registered. Redirecting");
+        navigation.goBack();
+      })
+
+      .catch((error) => {
+        console.log(error);
+        Alert.alert("Register", "Error! Not possible to register job.");
+      });
+  }
 
   return (
     <>
@@ -84,6 +117,7 @@ export function Register() {
                 borderColor: "gray.300",
                 bg: "white",
               }}
+              onChangeText={setCompany}
             />
 
             <Text
@@ -107,6 +141,7 @@ export function Register() {
                 borderColor: "gray.300",
                 bg: "white",
               }}
+              onChangeText={setOverview}
             />
           </VStack>
           <VStack mt="28">
@@ -120,12 +155,12 @@ export function Register() {
             </Text>
 
             <Select
-              selectedValue={category}
+              selectedValue={type}
               minWidth="200"
               accessibilityLabel="Choose Type"
               placeholder="Choose Type"
               mt={1}
-              onValueChange={(item) => setCategory(item)}
+              onValueChange={(item) => setType(item)}
             >
               <Select.Item label="Remote" value="remote" />
               <Select.Item label="Full Time" value="full-time" />
@@ -156,6 +191,7 @@ export function Register() {
                 borderColor: "gray.300",
                 bg: "white",
               }}
+              onChangeText={setRequirements}
             />
           </VStack>
         </ScrollView>
@@ -173,6 +209,7 @@ export function Register() {
           _pressed={{
             bg: "header.100",
           }}
+          onPress={handleJobRegister}
         >
           Register now
         </Button>

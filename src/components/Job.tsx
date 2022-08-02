@@ -11,9 +11,10 @@ import {
 
 export type JobProps = IButtonProps & {
   id: string;
-  title: string;
+  overview: string;
   company: string;
   type: "Remote" | "Full Time";
+  requirements: string;
 };
 
 type Props = IPressableProps & {
@@ -36,7 +37,7 @@ export function Job({ data, ...rest }: Props) {
     >
       <HStack space={5} alignItems="center">
         <Image
-          alt={data.title}
+          alt={data.overview}
           w="65"
           h="65"
           rounded="10"
@@ -46,7 +47,7 @@ export function Job({ data, ...rest }: Props) {
         />
         <VStack>
           <Heading fontSize="sm" fontWeight={500} color="primary.100">
-            {data.title}
+            {data.overview}
           </Heading>
           <Text color="gray.200" fontSize="xs">
             {data.company} • {data.type}

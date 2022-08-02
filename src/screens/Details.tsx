@@ -1,4 +1,7 @@
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Feather, FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
+import firestore from "@react-native-firebase/firestore";
+
 import {
   VStack,
   Text,
@@ -10,18 +13,60 @@ import {
   Button,
   Icon,
 } from "native-base";
+import { useEffect, useState } from "react";
+
+import { JobFireStoreDTO } from "../DTOs/JobFireStoreDTO";
+
+type RouteParams = {
+  jobId: string;
+};
+
+type JobDetails = JobProps & {
+  company: string;
+  overview: string;
+  type: "remote" | "full-time";
+  requirements: string;
+};
 
 import { Header } from "../components/Header";
+import { JobProps } from "../components/Job";
 
 export function Details() {
+
   const { colors } = useTheme();
+  const [job, setJob] = useState<JobDetails>({} as JobDetails);
+
+  const route = useRoute();
+  const { jobId } = route.params as RouteParams;
+
+  useEffect(() => {
+    firestore()
+      .collection<JobFireStoreDTO>("jobs")
+      .doc(jobId)
+      .get()
+      .then((doc) => {
+        const {
+          company,
+          overview,
+          type,
+          requirements,
+        } = doc.data();
+
+        setJob({
+          id: doc.id,
+          company,
+          overview,
+          type,
+          requirements,
+        });
+
+        // setIsLoading(false);
+      });
+  }, []);
 
   return (
     <>
-      <Header
-        title="Airbnb"
-        isEnable={true}
-      />
+      <Header title={job.company} isEnable={true} />
       <VStack
         flex={1}
         mt={-10}
@@ -56,14 +101,14 @@ export function Details() {
         </Box>
         <VStack alignItems="center">
           <Heading fontWeight={500} fontSize="lg" mb="2" color="primary.100">
-            Senior UI Designer
+            {job.overview}
           </Heading>
-          <HStack space={2} alignItems="center">
+          {/* <HStack space={2} alignItems="center">
             <Feather name="map-pin" size={15} color={colors.gray[100]} />
             <Text fontWeight={400} color="gray.400">
               Brasília, Brazil
             </Text>
-          </HStack>
+          </HStack> */}
 
           <Box
             mt="28"
@@ -75,7 +120,7 @@ export function Details() {
             rounded="10"
             alignItems="center"
           >
-            <Text color="green.300">Remote</Text>
+            <Text color="green.300">{job.type}</Text>
           </Box>
         </VStack>
 
@@ -94,9 +139,7 @@ export function Details() {
             letterSpacing="xs"
             fontSize="xs"
           >
-            As an experienced and talented UI designer, you will help the
-            product team to design unique, user-centric products and
-            experiences. You will be trusted to make deliberate.
+            {job.overview}
           </Text>
         </VStack>
         <VStack mt="28">
@@ -109,23 +152,9 @@ export function Details() {
             Requirements
           </Heading>
           <Text fontWeight={400} color="gray.600" fontSize="xs" mb={4}>
-            Gather and evaluate user requirements in collaboration with key
-            stakeholders.
+          {job.requirements}
           </Text>
 
-          <Text fontWeight={400} color="gray.600" fontSize="xs" mb={4}>
-            Build page navigation buttons and search fields.
-          </Text>
-
-          <Text fontWeight={400} color="gray.600" fontSize="xs" mb={4}>
-            Develop UI mock-ups and prototypes that clearly illustrate how sites
-            function and look.
-          </Text>
-
-          <Text fontWeight={400} color="gray.600" fontSize="xs" mb={4}>
-            Develop UI mock-ups and prototypes that clearly illustrate how sites
-            function and look.
-          </Text>
         </VStack>
       </VStack>
       <HStack space={5} bg="white" w="full" px="22" pb={6}>
@@ -144,13 +173,13 @@ export function Details() {
             },
             _focusVisible: {
               color: "white",
-            }
+            },
           }}
           leftIcon={
             <Icon
               color="gray.100"
               size="4"
-              as={<SimpleLineIcons name="envelope" size={24}  />}
+              as={<SimpleLineIcons name="envelope" size={24} />}
             />
           }
         >

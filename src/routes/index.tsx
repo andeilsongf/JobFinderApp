@@ -3,8 +3,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 import { Loading } from "../components/Loading";
-import { UserRoutes } from "./userRoutes";
-import { NonUserRoutes } from "./nonUserRoutes";
+import { UserRoutes } from "./UserRoutes";
+import { NonUserRoutes } from "./NonUserRoutes";
 
 function Routes() {
   const [loading, setLoading] = useState(true);
@@ -24,7 +24,9 @@ function Routes() {
   }
 
   return (
-    <NavigationContainer>{user ? <UserRoutes /> : <NonUserRoutes />}</NavigationContainer>
+    <NavigationContainer>
+      {user ? <UserRoutes /> : <NonUserRoutes />}
+    </NavigationContainer>
   );
 }
 
