@@ -1,7 +1,6 @@
 import {
   Heading,
   Pressable,
-  IButtonProps,
   Image,
   Text,
   VStack,
@@ -9,12 +8,15 @@ import {
   IPressableProps,
 } from "native-base";
 
-export type JobProps = IButtonProps & {
+export type JobProps = {
   id: string;
-  overview: string;
   company: string;
-  type: "Remote" | "Full Time";
-  requirements: string;
+  title: string;
+  description?: string;
+  type: "Remote" | "Presential";
+  requirements?: string;
+  email?: string;
+  whatsapp?: string;
 };
 
 type Props = IPressableProps & {
@@ -37,7 +39,7 @@ export function Job({ data, ...rest }: Props) {
     >
       <HStack space={5} alignItems="center">
         <Image
-          alt={data.overview}
+          alt={data.title}
           w="65"
           h="65"
           rounded="10"
@@ -46,8 +48,8 @@ export function Job({ data, ...rest }: Props) {
           }}
         />
         <VStack>
-          <Heading fontSize="sm" fontWeight={500} color="primary.100">
-            {data.overview}
+          <Heading fontSize="sm" mb={2} fontWeight={500} color="primary.100">
+            {data.title}
           </Heading>
           <Text color="gray.200" fontSize="xs">
             {data.company} • {data.type}

@@ -1,43 +1,36 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { Feather, FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
-import firestore from "@react-native-firebase/firestore";
-
+import { useRoute } from "@react-navigation/native";
+import { useEffect, useState } from "react";
 import {
   VStack,
   Text,
   Image,
   Heading,
   HStack,
-  useTheme,
   Box,
-  Button,
-  Icon,
+  Link,
+  useTheme,
+  ScrollView,
 } from "native-base";
-import { useEffect, useState } from "react";
 
+import { Header } from "../components/Header";
+import { JobProps } from "../components/Job";
+import firestore from "@react-native-firebase/firestore";
 import { JobFireStoreDTO } from "../DTOs/JobFireStoreDTO";
+
+import { FontAwesome, SimpleLineIcons } from "@expo/vector-icons";
 
 type RouteParams = {
   jobId: string;
 };
 
-type JobDetails = JobProps & {
-  company: string;
-  overview: string;
-  type: "remote" | "full-time";
-  requirements: string;
-};
-
-import { Header } from "../components/Header";
-import { JobProps } from "../components/Job";
+type JobDetails = JobProps & {};
 
 export function Details() {
-
-  const { colors } = useTheme();
   const [job, setJob] = useState<JobDetails>({} as JobDetails);
-
   const route = useRoute();
   const { jobId } = route.params as RouteParams;
+
+  const { colors } = useTheme();
 
   useEffect(() => {
     firestore()
@@ -47,20 +40,24 @@ export function Details() {
       .then((doc) => {
         const {
           company,
-          overview,
-          type,
+          title,
+          description,
           requirements,
+          type,
+          email,
+          whatsapp,
         } = doc.data();
 
         setJob({
           id: doc.id,
           company,
-          overview,
-          type,
+          title,
+          description,
           requirements,
+          type,
+          email,
+          whatsapp,
         });
-
-        // setIsLoading(false);
       });
   }, []);
 
@@ -101,14 +98,9 @@ export function Details() {
         </Box>
         <VStack alignItems="center">
           <Heading fontWeight={500} fontSize="lg" mb="2" color="primary.100">
-            {job.overview}
+            {job.company}
           </Heading>
-          {/* <HStack space={2} alignItems="center">
-            <Feather name="map-pin" size={15} color={colors.gray[100]} />
-            <Text fontWeight={400} color="gray.400">
-              Brasília, Brazil
-            </Text>
-          </HStack> */}
+          <Text fontWeight={600}>{job.title}</Text>
 
           <Box
             mt="28"
@@ -123,89 +115,101 @@ export function Details() {
             <Text color="green.300">{job.type}</Text>
           </Box>
         </VStack>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={{
+            paddingBottom: 100,
+          }}
+        >
+          <VStack mt="28">
+            <Heading
+              fontWeight={500}
+              color="primary.100"
+              letterSpacing="sm"
+              mb={2}
+            >
+              Description
+            </Heading>
+            <Text
+              fontWeight={400}
+              color="gray.600"
+              letterSpacing="xs"
+              fontSize="xs"
+            >
+              {job.description}
+            </Text>
+          </VStack>
 
-        <VStack mt="28">
-          <Heading
-            fontWeight={500}
-            color="primary.100"
-            letterSpacing="sm"
-            mb={2}
-          >
-            Overview
-          </Heading>
-          <Text
-            fontWeight={400}
-            color="gray.600"
-            letterSpacing="xs"
-            fontSize="xs"
-          >
-            {job.overview}
-          </Text>
-        </VStack>
-        <VStack mt="28">
-          <Heading
-            fontWeight={500}
-            color="primary.100"
-            letterSpacing="sm"
-            mb={2}
-          >
-            Requirements
-          </Heading>
-          <Text fontWeight={400} color="gray.600" fontSize="xs" mb={4}>
-          {job.requirements}
-          </Text>
-
-        </VStack>
+          <VStack mt="28">
+            <Heading
+              fontWeight={500}
+              color="primary.100"
+              letterSpacing="sm"
+              mb={2}
+            >
+              Requirements
+            </Heading>
+            <Text fontWeight={400} color="gray.600" fontSize="xs" mb={4}>
+              {job.requirements}
+            </Text>
+          </VStack>
+        </ScrollView>
       </VStack>
       <HStack space={5} bg="white" w="full" px="22" pb={6}>
-        <Button
-          variant="outline"
+        <Link
+          bg="white"
+          rounded={5}
+          flexGrow={1}
+          h={16}
+          borderWidth={1}
           borderColor="gray.100"
-          flexGrow={1}
+          textAlign="center"
+          justifyContent="center"
+          alignItems="center"
           _text={{
-            color: "gray.100",
+            color: "gray.200",
             fontWeight: 600,
+            textDecoration: "none",
           }}
-          _pressed={{
-            bg: "header.100",
-            _text: {
-              color: "white",
-            },
-            _focusVisible: {
-              color: "white",
-            },
-          }}
-          leftIcon={
-            <Icon
-              color="gray.100"
-              size="4"
-              as={<SimpleLineIcons name="envelope" size={24} />}
-            />
-          }
+          href={`mailto:${job.email}`}
         >
+          <FontAwesome
+            name="envelope"
+            size={20}
+            color={colors.gray[200]}
+            style={{
+              paddingRight: 10,
+            }}
+          />
           Email
-        </Button>
-        <Button
-          variant="outline"
-          borderColor="green.300"
+        </Link>
+
+        <Link
+          bg="green.300"
+          href={`https://api.whatsapp.com/send?phone=${job.whatsapp}&text=Hi!%20Would%20like%20to%20know%20more%20about%20the%20job%20at%20the%20${job.company}.`}
+          rounded={5}
           flexGrow={1}
+          h={16}
+          textAlign="center"
+          justifyContent="center"
+          alignItems="center"
           _text={{
-            color: "green.300",
+            color: "white",
             fontWeight: 600,
+            textDecoration: "none",
           }}
-          _pressed={{
-            bg: "green.100",
-          }}
-          leftIcon={
-            <Icon
-              color="green.300"
-              size="4"
-              as={<FontAwesome name="whatsapp" size={24} color="black" />}
-            />
-          }
+          // onPress={openWhatsApp}
         >
+          <FontAwesome
+            name="whatsapp"
+            size={20}
+            color="white"
+            style={{
+              paddingRight: 10,
+            }}
+          />
           WhatsApp
-        </Button>
+        </Link>
       </HStack>
     </>
   );

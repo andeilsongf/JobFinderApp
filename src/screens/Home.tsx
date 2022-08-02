@@ -35,7 +35,7 @@ export function Home() {
   const navigation = useNavigation();
 
   const [jobs, setJobs] = useState<JobProps[]>([]);
-  const [category, setCategory] = useState<"remote" | "full-time">("remote");
+  const [category, setCategory] = useState<"Remote" | "Presential">("Remote");
 
   const [locationServiceEnabled, setLocationServiceEnabled] = useState(false);
   const [displayCurrentAddress, setDisplayCurrentAddress] = useState(
@@ -44,8 +44,8 @@ export function Home() {
 
   function handleJobDetails(jobId: string) {
     navigation.navigate("details", {
-      jobId
-    })
+      jobId,
+    });
   }
 
   function handleLogout() {
@@ -74,13 +74,12 @@ export function Home() {
       .where("type", "==", category)
       .onSnapshot((snapshot) => {
         const data = snapshot.docs.map((doc) => {
-          const { company, overview, type, requirements } = doc.data();
+          const { company, title, type } = doc.data();
           return {
             id: doc.id,
+            title,
             company,
-            overview,
             type,
-            requirements,
           };
         });
 
@@ -272,12 +271,12 @@ export function Home() {
           <Category
             flexGrow={1}
             title="Remote"
-            onPress={() => setCategory("remote")}
+            onPress={() => setCategory("Remote")}
           />
           <Category
             flexGrow={1}
             title="Full-Time"
-            onPress={() => setCategory("full-time")}
+            onPress={() => setCategory("Presential")}
           />
         </HStack>
 
@@ -308,7 +307,9 @@ export function Home() {
         <FlatList
           data={jobs}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <Job data={item} onPress={() => handleJobDetails(item.id)} />}
+          renderItem={({ item }) => (
+            <Job data={item} onPress={() => handleJobDetails(item.id)} />
+          )}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingBottom: 500,

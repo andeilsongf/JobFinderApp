@@ -1,7 +1,6 @@
 import {
   VStack,
   Text,
-  Image,
   Heading,
   Box,
   Button,
@@ -9,6 +8,7 @@ import {
   StatusBar,
   Select,
   ScrollView,
+  HStack,
 } from "native-base";
 import { useState } from "react";
 
@@ -20,14 +20,17 @@ import { useNavigation } from "@react-navigation/native";
 
 export function Register() {
   const [company, setCompany] = useState("");
-  const [overview, setOverview] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [type, setType] = useState("");
   const [requirements, setRequirements] = useState("");
+  const [email, setEmail] = useState("");
+  const [whatsapp, setWhatsApp] = useState("");
 
   const navigation = useNavigation();
 
   function handleJobRegister() {
-    if (!company || !overview || !type || !requirements) {
+    if (!company || !title || !type || !requirements) {
       return Alert.alert("Register", "Please fill and the fields");
     }
 
@@ -35,9 +38,12 @@ export function Register() {
       .collection("jobs")
       .add({
         company,
-        overview,
+        title,
         type,
         requirements,
+        description,
+        email,
+        whatsapp,
         created_at: firestore.FieldValue.serverTimestamp(),
       })
 
@@ -126,7 +132,7 @@ export function Register() {
               letterSpacing="xs"
               mb={2}
             >
-              Overview
+              Title
             </Text>
 
             <Input
@@ -134,14 +140,37 @@ export function Register() {
               color="gray.600"
               letterSpacing="xs"
               fontSize="xs"
-              h={20}
-              multiline={true}
               textAlignVertical="top"
               _focus={{
                 borderColor: "gray.300",
                 bg: "white",
               }}
-              onChangeText={setOverview}
+              onChangeText={setTitle}
+            />
+
+            <Text
+              fontWeight={500}
+              color="primary.100"
+              letterSpacing="xs"
+              mb={2}
+              mt={6}
+            >
+              Description
+            </Text>
+
+            <Input
+              fontWeight={400}
+              color="gray.600"
+              letterSpacing="xs"
+              multiline={true}
+              h={20}
+              fontSize="xs"
+              textAlignVertical="top"
+              _focus={{
+                borderColor: "gray.300",
+                bg: "white",
+              }}
+              onChangeText={setDescription}
             />
           </VStack>
           <VStack mt="28">
@@ -162,8 +191,8 @@ export function Register() {
               mt={1}
               onValueChange={(item) => setType(item)}
             >
-              <Select.Item label="Remote" value="remote" />
-              <Select.Item label="Full Time" value="full-time" />
+              <Select.Item label="Remote" value="Remote" />
+              <Select.Item label="Presential" value="Presential" />
             </Select>
           </VStack>
 
@@ -181,6 +210,34 @@ export function Register() {
               fontWeight={400}
               color="gray.600"
               letterSpacing="xs"
+              h={32}
+              fontSize="xs"
+              multiline={true}
+              textAlignVertical="top"
+              flexGrow={1}
+              mb={5}
+              _focus={{
+                borderColor: "gray.300",
+                bg: "white",
+              }}
+              onChangeText={setRequirements}
+            />
+          </VStack>
+
+          <VStack flexGrow={1}>
+            <Text
+              fontWeight={500}
+              color="primary.100"
+              letterSpacing="xs"
+              mb={2}
+            >
+              Email
+            </Text>
+
+            <Input
+              fontWeight={400}
+              color="gray.600"
+              letterSpacing="xs"
               h={16}
               fontSize="xs"
               multiline={true}
@@ -191,7 +248,35 @@ export function Register() {
                 borderColor: "gray.300",
                 bg: "white",
               }}
-              onChangeText={setRequirements}
+              onChangeText={setEmail}
+            />
+          </VStack>
+
+          <VStack flexGrow={1}>
+            <Text
+              fontWeight={500}
+              color="primary.100"
+              letterSpacing="xs"
+              mb={2}
+            >
+              WhatsApp
+            </Text>
+
+            <Input
+              fontWeight={400}
+              color="gray.600"
+              letterSpacing="xs"
+              h={16}
+              fontSize="xs"
+              multiline={true}
+              textAlignVertical="top"
+              flexGrow={1}
+              mb={10}
+              _focus={{
+                borderColor: "gray.300",
+                bg: "white",
+              }}
+              onChangeText={setWhatsApp}
             />
           </VStack>
         </ScrollView>
