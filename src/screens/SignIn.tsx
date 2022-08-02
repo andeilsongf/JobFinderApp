@@ -9,7 +9,9 @@ import {
   Text,
   VStack,
 } from "native-base";
+
 import { SignInWithSocial } from "../components/SignInWithSocial";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 import AppleSvg from "../assets/apple.svg";
 import GoogleSvg from "../assets/google.svg";
@@ -23,6 +25,22 @@ export function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  GoogleSignin.configure({
+    webClientId:
+      "482818125523-8b9kp3ad728nrnm3q6ocdt303lbi5mhp.apps.googleusercontent.com",
+  });
+
+  async function onGoogleButtonPress() {
+    // Get the users ID token
+    const { idToken } = await GoogleSignin.signIn();
+
+    // Create a Google credential with the token
+    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+    // Sign-in the user with the credential
+    return auth().signInWithCredential(googleCredential);
+  }
 
   function handleSignIn() {
     if (!email || !password) {
@@ -156,7 +174,12 @@ export function SignIn() {
         </Text>
       </VStack>
       <HStack w="full" mt={3} space={5}>
-        <SignInWithSocial svg={GoogleSvg} onPress={() => {}} flexGrow={1} />
+        
+        <SignInWithSocial
+          svg={GoogleSvg}
+          flexGrow={1}
+          onPress={onGoogleButtonPress}
+        />
 
         <SignInWithSocial svg={AppleSvg} onPress={() => {}} flexGrow={1} />
       </HStack>

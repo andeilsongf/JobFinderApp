@@ -17,6 +17,7 @@ function Routes() {
     });
 
     return subscriber;
+    
   }, []);
 
   if (loading) {
