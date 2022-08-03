@@ -10,16 +10,16 @@ import {
   VStack,
 } from "native-base";
 
+import auth from "@react-native-firebase/auth";
+import { useState } from "react";
+import { Alert } from "react-native";
+
 import { SignInWithSocial } from "../components/SignInWithSocial";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
-import AppleSvg from "../assets/apple.svg";
 import GoogleSvg from "../assets/google.svg";
-import auth from "@react-native-firebase/auth";
-
 import { FontAwesome } from "@expo/vector-icons";
-import { useState } from "react";
-import { Alert } from "react-native";
+import { Loading } from "../components/Loading";
 
 export function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,13 +32,8 @@ export function SignIn() {
   });
 
   async function onGoogleButtonPress() {
-    // Get the users ID token
     const { idToken } = await GoogleSignin.signIn();
-
-    // Create a Google credential with the token
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-    // Sign-in the user with the credential
     return auth().signInWithCredential(googleCredential);
   }
 
@@ -56,19 +51,23 @@ export function SignIn() {
         setIsLoading(false);
 
         if (error.code === "auth/invalid-email") {
-          return Alert.alert("Entrar", "E-mail inválido.");
+          return Alert.alert("Sign In", "Invalid email.");
         }
 
         if (error.code === "auth/wrong-password") {
-          return Alert.alert("Entrar", "E-mail ou senha inválida.");
+          return Alert.alert("SignIn", "Email and password invalid.");
         }
 
         if (error.code === "auth/user-not-found") {
-          return Alert.alert("Entrar", "E-mail ou senha inválida.");
+          return Alert.alert("SignIn", "Email or password invalid.");
         }
 
-        return Alert.alert("Entrar", "Não foi possível acessar.");
+        return Alert.alert("SignIn", "Not possible to access.");
       });
+  }
+
+  if (isLoading) {
+    return <Loading />;
   }
 
   return (
@@ -128,6 +127,7 @@ export function SignIn() {
             bg: "gray.300",
           }}
           autoCapitalize={"none"}
+          autoCorrect={false}
           onChangeText={setEmail}
         />
 
@@ -164,6 +164,7 @@ export function SignIn() {
           fontWeight: 500,
         }}
         onPress={handleSignIn}
+        isLoading={isLoading}
       >
         Sign In
       </Button>
@@ -174,14 +175,11 @@ export function SignIn() {
         </Text>
       </VStack>
       <HStack w="full" mt={3} space={5}>
-        
         <SignInWithSocial
           svg={GoogleSvg}
           flexGrow={1}
           onPress={onGoogleButtonPress}
         />
-
-        <SignInWithSocial svg={AppleSvg} onPress={() => {}} flexGrow={1} />
       </HStack>
     </VStack>
   );

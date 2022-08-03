@@ -33,7 +33,6 @@ export function Category({ title, ...rest }: Props) {
         fontSize="sm"
         fontWeight={500}
         color="primary.100"
-        mb={2}
       >
         {title}
       </Heading>

@@ -6,6 +6,7 @@ import {
   VStack,
   HStack,
   IPressableProps,
+  Box,
 } from "native-base";
 
 export type JobProps = {
@@ -38,15 +39,23 @@ export function Job({ data, ...rest }: Props) {
       {...rest}
     >
       <HStack space={5} alignItems="center">
-        <Image
-          alt={data.title}
+        <Box
           w="65"
           h="65"
           rounded="10"
-          source={{
-            uri: "https://s3-alpha.figma.com/hub/file/697598809/ce5e0bb3-16b9-4d88-9bca-7d237fe725a8-cover.png",
-          }}
-        />
+          bg="green.400"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Text
+            fontSize="30"
+            fontWeight={600}
+            color="green.100"
+            textAlign="center"
+          >
+            {data.company.charAt(0)}
+          </Text>
+        </Box>
         <VStack>
           <Heading fontSize="sm" mb={2} fontWeight={500} color="primary.100">
             {data.title}
