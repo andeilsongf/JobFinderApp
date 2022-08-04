@@ -29,15 +29,18 @@ import { Job, JobProps } from "../components/Job";
 import { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Alert } from "react-native";
+import { Loading } from "../components/Loading";
 
 export function Home() {
   const { colors } = useTheme();
   const navigation = useNavigation();
 
   const [jobs, setJobs] = useState<JobProps[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [category, setCategory] = useState<"Remote" | "Presential">("Remote");
+  const [search, setSearch] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
 
-  const [locationServiceEnabled, setLocationServiceEnabled] = useState(false);
   const [displayCurrentAddress, setDisplayCurrentAddress] = useState(
     "Wait, we are fetching you location..."
   );
@@ -46,6 +49,10 @@ export function Home() {
     navigation.navigate("details", {
       jobId,
     });
+  }
+
+  function registerJob() {
+    navigation.navigate("register");
   }
 
   function handleLogout() {
@@ -60,12 +67,9 @@ export function Home() {
       });
   }
 
-  function registerJob() {
-    navigation.navigate("register");
-  }
-
   useEffect(() => {
     GetCurrentLocation();
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
@@ -117,6 +121,26 @@ export function Home() {
       }
     }
   };
+
+  const searchFilter = (text: string) => {
+    if (text) {
+      const filteredData = jobs.filter((job) => {
+        const itemData = job.title ? job.title.toLowerCase() : "".toLowerCase();
+        const textData = text.toLowerCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilteredData(filteredData);
+      setSearch(text);
+      setIsLoading(false);
+    } else {
+      setFilteredData([]);
+      setSearch("");
+    }
+  };
+
+  if (isLoading) {
+    <Loading />
+  }
 
   return (
     <VStack bg="gray.300" flex={1}>
@@ -205,7 +229,7 @@ export function Home() {
           <Input
             placeholder="Search job or positions ..."
             borderWidth={0}
-            w="315"
+            w="full"
             bg="white"
             h="50"
             _focus={{
@@ -215,25 +239,12 @@ export function Home() {
             }}
             fontSize="sm"
             fontWeight={400}
+            onChangeText={(text) => searchFilter(text)}
             leftElement={
               <Icon
                 size={6}
                 as={<Feather name="search" color="gray.200" />}
                 ml={4}
-              />
-            }
-          />
-          <Button
-            bg="green.300"
-            w="50"
-            h="50"
-            _pressed={{
-              bg: "green.200",
-            }}
-            leftIcon={
-              <Icon
-                size={8}
-                as={<Feather name="align-center" size={30} color="white" />}
               />
             }
           />
@@ -275,7 +286,7 @@ export function Home() {
           />
           <Category
             flexGrow={1}
-            title="Full-Time"
+            title="Presential"
             onPress={() => setCategory("Presential")}
           />
         </HStack>
@@ -294,41 +305,61 @@ export function Home() {
           >
             Recent Jobs
           </Heading>
-          <Text
-            fontWeight={500}
-            fontSize="xs"
-            letterSpacing="xs"
-            color="green.200"
-          >
-            Show All
-          </Text>
         </HStack>
 
-        <FlatList
-          data={jobs}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <Job data={item} onPress={() => handleJobDetails(item.id)} />
-          )}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: 500,
-          }}
-          ListEmptyComponent={() => (
-            <Center pt={20}>
-              <HStack alignItems="center" space={3}>
-                <Ionicons
-                  name="ios-alert-circle-outline"
-                  size={24}
-                  color={colors.gray[200]}
-                />
-                <Text fontWeight={400} fontSize="2xl" color="gray.200">
-                  No jobs registered.
-                </Text>
-              </HStack>
-            </Center>
-          )}
-        />
+        {filteredData.length > 0 ? (
+          <FlatList
+            data={filteredData}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <Job data={item} onPress={() => handleJobDetails(item.id)} />
+            )}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingBottom: 500,
+            }}
+            ListEmptyComponent={() => (
+              <Center pt={20}>
+                <HStack alignItems="center" space={3}>
+                  <Ionicons
+                    name="ios-alert-circle-outline"
+                    size={24}
+                    color={colors.gray[200]}
+                  />
+                  <Text fontWeight={400} fontSize="2xl" color="gray.200">
+                    No results for this search. Try again.
+                  </Text>
+                </HStack>
+              </Center>
+            )}
+          />
+        ) : (
+          <FlatList
+            data={jobs}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <Job data={item} onPress={() => handleJobDetails(item.id)} />
+            )}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingBottom: 500,
+            }}
+            ListEmptyComponent={() => (
+              <Center pt={20}>
+                <HStack alignItems="center" space={3}>
+                  <Ionicons
+                    name="ios-alert-circle-outline"
+                    size={24}
+                    color={colors.gray[200]}
+                  />
+                  <Text fontWeight={400} fontSize="2xl" color="gray.200">
+                    No jobs registered.
+                  </Text>
+                </HStack>
+              </Center>
+            )}
+          />
+        )}
       </VStack>
     </VStack>
   );
