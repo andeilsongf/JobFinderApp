@@ -1,6 +1,14 @@
 import { MaterialIcons, SimpleLineIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { Button, IButtonProps, Heading, HStack, Icon, useTheme, VStack } from "native-base";
+import {
+  Button,
+  IButtonProps,
+  Heading,
+  HStack,
+  Icon,
+  useTheme,
+  VStack,
+} from "native-base";
 
 type Props = IButtonProps & {
   title: string;
@@ -8,7 +16,6 @@ type Props = IButtonProps & {
 };
 
 export function Header({ title, isEnable, ...rest }: Props) {
-
   const { colors } = useTheme();
   const isShow = isEnable ? true : false;
 
@@ -47,28 +54,9 @@ export function Header({ title, isEnable, ...rest }: Props) {
           }}
           onPress={handleBlack}
         />
-        <Heading color="gray.500" fontSize="sm" fontWeight={400}>
+        <Heading flexGrow={1} textAlign="center" mr={23}  color="gray.500" fontSize="sm" fontWeight={400}>
           {title}
         </Heading>
-
-        <Button
-          opacity={isShow ? 1 : 0}
-          variant="outline"
-          borderWidth={0}
-          p={0}
-          leftIcon={
-            <Icon
-              size={5}
-              color="primary.100"
-              as={
-                <SimpleLineIcons name="share-alt" color={colors.green[300]} />
-              }
-            />
-          }
-          _pressed={{
-            bg: "transparent",
-          }}
-        />
       </HStack>
     </VStack>
   );
